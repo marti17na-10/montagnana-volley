@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Montagnana Volley</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #0d0d0d; color: #ffffff; font-family: sans-serif; }
+    .bg-red-accent { background-color: #e50914; }
+    .text-red-accent { color: #e50914; }
+    .marquee { display: flex; overflow: hidden; white-space: nowrap; background: #e50914; color: white; font-weight: bold; padding: 6px 0; }
+    .marquee-content { display: flex; animation: marquee 15s linear infinite; }
+    @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+  </style>
+</head>
+<body class="p-0 m-0">
+
+  <!-- HEADER / HERO -->
+  <header class="relative bg-neutral-900 border-b border-neutral-800 p-8 text-center min-h-[300px] flex flex-col justify-center items-center">
+    <p class="text-xs tracking-widest text-gray-400 uppercase">Coppa Padova Femminile • Memorial Sandro Ceccarello</p>
+    <h1 class="text-5xl md:text-7xl font-extrabold uppercase text-white my-2 tracking-tight">MONTAGNANA <span class="text-red-accent">VOLLEY</span></h1>
+    <p class="text-sm text-gray-400">STAGIONE 2026/2027 | DATI UFFICIALI FIPAV</p>
+  </header>
+
+  <!-- BARRA SCORREVOLE -->
+  <div class="marquee">
+    <div class="marquee-content">
+      <span>MONTAGNANA VOLLEY &nbsp;•&nbsp; PASSIONE &nbsp;•&nbsp; DETERMINAZIONE &nbsp;•&nbsp; VITTORIA &nbsp;•&nbsp; MONTAGNANA VOLLEY &nbsp;•&nbsp; PASSIONE &nbsp;•&nbsp; DETERMINAZIONE &nbsp;•&nbsp; VITTORIA &nbsp;•&nbsp;</span>
+    </div>
+  </div>
+
+  <main class="max-w-5xl mx-auto px-4 py-8 space-y-12">
+
+    <!-- SEZIONE 01: IN CAMPO (PARTITE) -->
+    <section>
+      <div class="flex items-center space-x-3 mb-6">
+        <span class="text-3xl font-black text-red-accent">01</span>
+        <h2 class="text-2xl font-bold uppercase tracking-wide">IN CAMPO <span class="text-xs text-gray-500 font-normal">PROSSIME PARTITE</span></h2>
+      </div>
+      <div id="partite-container" class="space-y-3">
+        <!-- Generato via JavaScript -->
+      </div>
+    </section>
+
+    <!-- SEZIONE 02: LA CLASSIFICA -->
+    <section>
+      <div class="flex items-center space-x-3 mb-6">
+        <span class="text-3xl font-black text-red-accent">02</span>
+        <h2 class="text-2xl font-bold uppercase tracking-wide">LA CLASSIFICA</h2>
+      </div>
+      <div class="overflow-x-auto bg-neutral-900 rounded-lg p-4">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="text-gray-400 border-b border-neutral-800 uppercase text-xs">
+              <th class="p-2">POS</th>
+              <th class="p-2">SQUADRA</th>
+              <th class="p-2 text-center">PT</th>
+              <th class="p-2 text-center">PG</th>
+              <th class="p-2 text-center">PV</th>
+              <th class="p-2 text-center">PP</th>
+              <th class="p-2 text-center">SET</th>
+            </tr>
+          </thead>
+          <tbody id="classifica-container">
+            <!-- Generato via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SEZIONE 03: PROSSIMA PARTITA & CAMPO DI GIOCO -->
+    <section>
+      <div class="flex items-center space-x-3 mb-6">
+        <span class="text-3xl font-black text-red-accent">03</span>
+        <h2 class="text-2xl font-bold uppercase tracking-wide">PROSSIMA PARTITA <span class="text-xs text-gray-500 font-normal">CAMPO DI GIOCO</span></h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-neutral-900 rounded-lg p-6 items-center">
+        <div>
+          <h3 id="prossima-scontro" class="text-xl font-bold uppercase mb-2">---</h3>
+          <p id="prossima-data" class="text-red-accent text-sm font-semibold mb-4">---</p>
+          <div class="space-y-1 text-sm text-gray-300">
+            <p class="font-bold text-white uppercase" id="prossima-palestra">---</p>
+            <p id="prossima-indirizzo">---</p>
+          </div>
+        </div>
+        <div>
+          <iframe id="map-iframe" width="100%" height="220" style="border:0; border-radius: 8px;" allowfullscreen="" loading="lazy" src=""></iframe>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center py-6 border-t border-neutral-800 text-xs text-gray-500">
+    FONTE DATI: FIPAV PADOVA • © 2026 MONTAGNANA VOLLEY
+  </footer>
+
+  <!-- SCRIPT CARICAMENTO DATI DINAMICI -->
+  <script>
+    async function loadData() {
+      try {
+        const res = await fetch('data.json');
+        const data = await res.json();
+
+        // 1. Render Partite
+        const partiteBox = document.getElementById('partite-container');
+        partiteBox.innerHTML = data.partite.map(p => {
+          const isMontagnanaCasa = p.casa.includes('MONTAGNANA');
+          const isMontagnanaOspite = p.ospite.includes('MONTAGNANA');
+          return `
+            <div class="flex flex-col md:flex-row justify-between items-center bg-neutral-900 p-4 rounded border-l-4 ${ (isMontagnanaCasa || isMontagnanaOspite) ? 'border-red-600' : 'border-transparent' }">
+              <div class="text-center md:text-left mb-2 md:mb-0">
+                <span class="text-red-accent font-bold text-lg">${p.data}</span>
+                <span class="text-xs text-gray-400 block">${p.ora}</span>
+              </div>
+              <div class="font-semibold text-center uppercase tracking-wide">
+                <span class="${isMontagnanaCasa ? 'text-red-accent font-black' : ''}">${p.casa}</span>
+                <span class="text-gray-500 mx-2">VS</span>
+                <span class="${isMontagnanaOspite ? 'text-red-accent font-black' : ''}">${p.ospite}</span>
+              </div>
+              <span class="text-xs bg-neutral-800 text-gray-400 px-3 py-1 rounded mt-2 md:mt-0">${p.giornata}</span>
+            </div>
+          `;
+        }).join('');
+
+        // 2. Render Classifica
+        const classificaBox = document.getElementById('classifica-container');
+        classificaBox.innerHTML = data.classifica.map(c => {
+          const isMontagnana = c.squadra.includes('MONTAGNANA');
+          return `
+            <tr class="border-b border-neutral-800 ${isMontagnana ? 'bg-red-950 font-bold text-white' : ''}">
+              <td class="p-2 text-center">${c.pos}</td>
+              <td class="p-2 ${isMontagnana ? 'text-red-400' : ''}">${c.squadra}</td>
+              <td class="p-2 text-center font-bold">${c.pt}</td>
+              <td class="p-2 text-center">${c.pg}</td>
+              <td class="p-2 text-center">${c.pv}</td>
+              <td class="p-2 text-center">${c.pp}</td>
+              <td class="p-2 text-center text-gray-400">${c.set}</td>
+            </tr>
+          `;
+        }).join('');
+
+        // 3. Render Prossima Partita & Mappa
+        document.getElementById('prossima-scontro').innerText = data.prossimaPartita.scontro;
+        document.getElementById('prossima-data').innerText = data.prossimaPartita.data;
+        document.getElementById('prossima-palestra').innerText = data.prossimaPartita.palestra;
+        document.getElementById('prossima-indirizzo').innerText = data.prossimaPartita.indirizzo;
+        
+        const query = encodeURIComponent(data.prossimaPartita.queryMappa);
+        document.getElementById('map-iframe').src = `https://maps.google.com/maps?q=${query}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+
+      } catch (err) {
+        console.error("Errore nel caricare il file data.json", err);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
