@@ -103,13 +103,17 @@
         const res = await fetch('data.json');
         const data = await res.json();
 
-        // 1. Render Partite
+       // 1. Render Partite (Filtra solo le partite del Montagnana)
         const partiteBox = document.getElementById('partite-container');
-        partiteBox.innerHTML = data.partite.map(p => {
+        const partiteMontagnana = data.partite.filter(p => 
+          p.casa.includes('MONTAGNANA') || p.ospite.includes('MONTAGNANA')
+        );
+
+        partiteBox.innerHTML = partiteMontagnana.map(p => {
           const isMontagnanaCasa = p.casa.includes('MONTAGNANA');
           const isMontagnanaOspite = p.ospite.includes('MONTAGNANA');
           return `
-            <div class="flex flex-col md:flex-row justify-between items-center bg-neutral-900 p-4 rounded border-l-4 ${ (isMontagnanaCasa || isMontagnanaOspite) ? 'border-red-600' : 'border-transparent' }">
+            <div class="flex flex-col md:flex-row justify-between items-center bg-neutral-900 p-4 rounded border-l-4 border-red-600">
               <div class="text-center md:text-left mb-2 md:mb-0">
                 <span class="text-red-accent font-bold text-lg">${p.data}</span>
                 <span class="text-xs text-gray-400 block">${p.ora}</span>
