@@ -1,0 +1,23 @@
+name: Aggiorna Dati FIPAV
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Viene eseguito ogni 6 ore
+  workflow_dispatch: # Ti permette anche di avviarlo manualmente
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: node scraper.js
+      - name: Salva modifiche
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data.json
+          git commit -m "Aggiornamento automatico dati FIPAV" || exit 0
+          git push
